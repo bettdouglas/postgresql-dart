@@ -33,6 +33,9 @@ class PostgresTextEncoder {
     }
 
     // TODO: use custom type encoders
+    if (value is Geometry) {
+      return value.toText();
+    }
 
     throw PostgreSQLException("Could not infer type of value '$value'.");
   }

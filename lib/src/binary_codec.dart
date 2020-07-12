@@ -198,6 +198,17 @@ class PostgresBinaryEncoder extends Converter<dynamic, Uint8List> {
             outBuffer[j] = (upperByte << 4) + lowerByte;
           }
           return outBuffer;
+        }      
+        case PostgreSQLDataType.geometry:
+        case PostgreSQLDataType.geography:
+        {
+          if (value is Geometry) {
+            return castBytes(
+              utf8.encode(
+                value.toText(),
+              ),
+            );
+          }
         }
     }
 
@@ -276,6 +287,19 @@ class PostgresBinaryDecoder extends Converter<Uint8List, dynamic> {
           }
 
           return buf.toString();
+        }
+        
+        case PostgreSQLDataType.geometry:
+        case PostgreSQLDataType.geography:
+        {
+          final wkbReader =
+              WKBReader(); // postgis geometries are stored as Well Known Binaries (https://postgis.net/docs/using_postgis_dbmanagement.html)
+          final geometry = wkbReader.read(value);
+          if (geometry is Geometry) {
+            return geometry;
+          } else {
+            throw PostgreSQLException('Error parsing geometry');
+          }
         }
     }
 

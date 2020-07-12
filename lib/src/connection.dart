@@ -184,7 +184,7 @@ class PostgreSQLConnection extends Object
 
   Future createExtension(String extensionName) async {
     try {
-      await _query('CREATE EXTENSION IF NOT EXISTS @name',substitutionValues: {'name': extensionName});
+      await _query('CREATE EXTENSION IF NOT EXISTS $extensionName');
       // After creating an extension e.g CREATE EXTENSION postgis or create extension hstore -> the data type is added to pg_types which contains oid and typename from postgres. 
       // i.e values stored in the PostgresBinaryDecoder.typeMap. To have this driver able to understand any postgres type, scanPostgresTypes should scan database on connecting/after creating and extension.
       // 
@@ -203,7 +203,7 @@ class PostgreSQLConnection extends Object
     // fetch oids from database (dynamic values)
     final dataTypes = await _connection._query(
       '''
-        select oid::int,typname from pg_type where typname in ('text','int2','int4','int8','float4','float8','bool','date','bytea', 'timestamp','timestamptz','jsonb','name','uuid');
+        select oid::int,typname from pg_type where typname in ('text','int2','int4','int8','float4','float8','bool','date','bytea', 'timestamp','timestamptz','jsonb','name','uuid','geography','geometry');
         ''',
     );
 

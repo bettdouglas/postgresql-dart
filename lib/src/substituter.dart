@@ -47,6 +47,10 @@ class PostgreSQLFormat {
         return 'name';
       case PostgreSQLDataType.uuid:
         return 'uuid';
+      case PostgreSQLDataType.geometry:
+        return 'geometry';
+      case PostgreSQLDataType.geography:
+        return 'geography';
     }
 
     return null;
